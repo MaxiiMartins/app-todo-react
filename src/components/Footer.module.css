@@ -1,0 +1,11 @@
+
+.linkedin svg:hover {
+    fill: rgb(0, 119, 255);
+  }
+
+  .github svg{
+      fill: rgb(0, 0, 0);
+}
+.github svg:hover {
+    fill: rgb(49, 57, 64);
+  }

@@ -1,10 +1,12 @@
+import Footer from "./components/Footer";
 import Home from "./components/Home";
 
 function App() {
   return (
-    <div className="App vh-100">
-      <div className="container vh-100 bg-light">
+    <div className="App">
+      <div className="container bg-light">
         <Home />
+      <Footer/>
       </div>
     </div>
   );

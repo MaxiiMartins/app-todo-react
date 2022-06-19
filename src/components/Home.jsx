@@ -1,22 +1,58 @@
 import React, { useEffect, useState } from "react";
+import Swal from "sweetalert2";
+import Bienvenidos from "./Bienvenidos";
+// import Contacto from "./Contacto";
 import CreadorTareas from "./CreadorTareas";
 import ListaTareas from "./ListaTareas";
 import MostrarTareaCompleta from "./MostrarTareaCompleta";
 import Nav from "./Nav";
-import logo from "../img/logo192.png"
-
 
 function Home() {
   const [listaDeTareas, setlistaDeTareas] = useState([]);
   const [tareaCompletada, setTareaCompletada] = useState(false);
-  const [pestaña,setPestaña] = useState(1)
+  const [pestaña, setPestaña] = useState(1);
+  const alertaPersonalizada = (titulo) =>{
+    let timerInterval;
+      Swal.fire({
+        title: titulo,
+        icon:"info",
+        timer: 1500,
+        timerProgressBar: true,
+        didOpen: () => {
+          Swal.showLoading();
+          const b = Swal.getHtmlContainer().querySelector("b");
+          timerInterval = setInterval(() => {
+            b.textContent = Swal.getTimerLeft();
+          }, 100);
+        },
+        willClose: () => {
+          clearInterval(timerInterval);
+        },
+      });
+  }
 
   function agregarTarea(tarea) {
-    if (!listaDeTareas.find((e) => e.name === tarea)) {
+    if (!listaDeTareas.find((e) => e.name.toLowerCase() === tarea.toLowerCase())) {
       const newTarea = { name: tarea, done: false };
       setlistaDeTareas([...listaDeTareas, newTarea]);
     } else {
-      alert("ya existe una tarea con ese nombre");
+      let timerInterval;
+      Swal.fire({
+        title: "Ya existe esa tarea",
+        icon:"info",
+        timer: 2000,
+        timerProgressBar: true,
+        didOpen: () => {
+          Swal.showLoading();
+          const b = Swal.getHtmlContainer().querySelector("b");
+          timerInterval = setInterval(() => {
+            b.textContent = Swal.getTimerLeft();
+          }, 100);
+        },
+        willClose: () => {
+          clearInterval(timerInterval);
+        },
+      });
     }
   }
 
@@ -28,9 +64,30 @@ function Home() {
   }
 
   function limpiarTareas() {
-    const nuevo = listaDeTareas.filter((e) => !e.done);
-    setlistaDeTareas(nuevo);
-    setTareaCompletada(false);
+    if(listaDeTareas.length){
+      Swal.fire({
+        title: '¿Estas seguro de querer eliminar las tareas realizadas?',
+        text: "¡No podrás revertir esto!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: '¡Sí, bórralo!'
+      }).then((result) => {
+        if (result.isConfirmed) {
+          const nuevo = listaDeTareas.filter((e) => !e.done);
+      setlistaDeTareas(nuevo);
+      setTareaCompletada(false);
+          Swal.fire(
+            '¡Eliminado correctamente!',
+            '',
+            'success'
+          )
+        }
+      })
+    }else{
+      alertaPersonalizada("Todavia no has realizado ninguna tarea pendiente")
+    }
   }
 
   //nos traemos el localStorage y lo guardamos en nuestro estado del componente
@@ -46,64 +103,55 @@ function Home() {
     localStorage.setItem("Lista", JSON.stringify(listaDeTareas));
   }, [listaDeTareas]);
 
-
   return (
-    <div>
+    <div className="min-vh-100">
       <header>
         <Nav setPestaña={setPestaña} pestaña={pestaña} />
       </header>
-      <div className="tab-content py-3" id="nav-tabContent">
+      <div
+        className="tab-content py-3 row justify-content-center"
+        id="nav-tabContent"
+      >
         <div
-        className={pestaña === 1 ?"tab-pane fade show active":"tab-pane fade"}
+          className={
+            pestaña === 1 ? "tab-pane fade show active" : "tab-pane fade"
+          }
           id="nav-home"
           role="tabpanel"
           aria-labelledby="nav-home-tab"
         >
-          <img src={logo} alt="logo" />
-          <div class="card-body">
-    <h5 className="card-title">Special title treatment</h5>
-    <p className="card-text">With supporting text below as a natural lead-in to additional content.</p>
-    <button className="btn btn-primary" onClick={()=>setPestaña(2)} >Go somewhere</button>
-  </div>
+          <Bienvenidos setPestaña={setPestaña} />
         </div>
         <div
-          className={pestaña === 2 ?"tab-pane fade show active":"tab-pane fade"}
+          className={
+            pestaña === 2 ? "tab-pane fade show active" : "tab-pane fade"
+          }
           id="nav-profile"
           role="tabpanel"
           aria-labelledby="nav-profile-tab"
         >
-          <main>
-        <CreadorTareas agregarTarea={agregarTarea} />
-        <ListaTareas
-            titulo={"Tareas pendientes"}
-          lista={listaDeTareas}
-          actualizar={actualizarTarea}
-          filtrar={false}
-        />
-
-        <MostrarTareaCompleta
-          actualizarTarea={(booleano) => setTareaCompletada(booleano)}
-          limpiarTareas={limpiarTareas}
-          tareaCompletada={tareaCompletada}
-        />
-
-        {tareaCompletada && (
+          <CreadorTareas agregarTarea={agregarTarea} alerta={alertaPersonalizada} />
           <ListaTareas
-            titulo={"Tareas realizadas"}
+            titulo={"Tareas pendientes"}
             lista={listaDeTareas}
             actualizar={actualizarTarea}
-            filtrar={tareaCompletada}
+            filtrar={false}
           />
-        )}
-      </main>
-        </div>
-        <div
-         className={pestaña === 3 ?"tab-pane fade show active":"tab-pane fade"}
-          id="nav-contact"
-          role="tabpanel"
-          aria-labelledby="nav-contact-tab"
-        >
-          ...
+
+          <MostrarTareaCompleta
+            actualizarTarea={(booleano) => setTareaCompletada(booleano)}
+            limpiarTareas={limpiarTareas}
+            tareaCompletada={tareaCompletada}
+          />
+
+          {tareaCompletada && (
+            <ListaTareas
+              titulo={"Tareas realizadas"}
+              lista={listaDeTareas}
+              actualizar={actualizarTarea}
+              filtrar={tareaCompletada}
+            />
+          )}
         </div>
       </div>
     </div>

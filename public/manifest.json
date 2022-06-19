@@ -1,11 +1,13 @@
 {
   "short_name": "Lista de tarea",
-  "name": "Aplicacion de Lista de tarea simple",
+  "name": "Lista de tarea simple",
+  "description":"Aplicacion lista de tarea simple creada por Maxi Martins",
   "icons": [
     {
-      "src": "favicon.ico",
-      "sizes": "64x64 32x32 24x24 16x16",
-      "type": "image/x-icon"
+      "src": "path/to/maskable_icon.png",
+      "sizes": "196x196",
+      "type": "image/png",
+      "purpose": "any maskable"
     },
     {
       "src": "logo192.png",

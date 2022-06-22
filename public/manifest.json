@@ -1,7 +1,7 @@
 {
   "short_name": "Lista de tarea",
   "name": "Lista de tarea simple",
-  "description":"Aplicacion lista de tarea simple creada por Maxi Martins",
+  "description":"Lista de tarea es una Aplicacion Web creada por Maxi Martins",
   "icons": [
     {
       "src": "path/to/maskable_icon.png",
@@ -22,7 +22,6 @@
   ],
   "start_url": ".",
   "display": "fullscreen",
-  "orientation":"portrait",
   "theme_color": "#000000",
   "background_color": "#ffffff"
 }
